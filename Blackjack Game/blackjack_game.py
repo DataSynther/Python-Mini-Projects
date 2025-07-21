@@ -164,3 +164,141 @@ def get_move(player_hand, money):
                 return move
     except Exception as e:
         print ('The Following error occured while calculating player move ', e)
+
+
+
+
+### Designing the MAIN GAME 
+
+def main():
+    try:
+        print ('''  HELLO !!! WELCOME TO BACKJACK GAME !!!!   
+            
+            RULES:
+            
+                    Try to get as close to 21 without going over.
+                    Kings, Queens and Jacks are worth 10 points.
+                    Aces are worth 1 and 11 points
+                    Cards 2 through 10 are worth their face value.
+                    
+                    (H)it to take another card.
+                    (S)tand to stop taking cards.
+                    On your first play, you can (D)ouble down to increase your bet 
+                    but must hit exactly one more time before standing.
+                    In case of a tie, the bet is returned to the player.
+                    The dealer stops hitting at 17.''')
+        
+        #Defining the initial money value
+        money = 5000
+
+        #Main Game Loop
+        while True: 
+            #Check if the player has run out of money or not 
+            if money <= 0:
+                print ("""You're broke!
+                    Good Thing you weren't playing with real money !
+                    Thanks for playing! """)
+                sys.exit()
+            
+            #Let the player enter their bet for this round
+
+            print ( 'Current Balance  :' , money )
+            bet = get_bet(money)
+
+            #Give the dealer and the player two cards from the deck each:
+            deck = get_deck()
+            dealer_hand = [deck.pop(),deck.pop()] # Note: pop takes the last item from the iterative
+            player_hand = [deck.pop(),deck.pop()]
+
+            ## Handle player actions
+            print ('Bet :', bet)
+
+            # keep looping for player actions until player stands or busts
+            while True:
+                display_hands (player_hand, dealer_hand)
+                print()
+
+                #check if the player has bust:
+                if get_hand_value(player_hand)>21:
+                    break
+
+                #Get the player's move, either H,S or D
+                move = get_move(player_hand, money - bet)
+
+                #Dealing the player move based on the chosen move
+
+                #Calculate New Bet in case the player is doubling down
+                if move == 'D':
+                    # Player is doubling down, they can increase their bet:
+                    additional_bet = get_bet(min(bet, (money - bet)))
+                    bet += additional_bet
+                    print("Bet is increased to {}".format(bet))
+                    print ("Bet :", bet)
+
+                # Drawing new card if doubling down (which is similar as asking for Hit)
+                if move in ('H','D'):
+                    #Hit / doubling down takes another card 
+                    new_card = deck.pop()
+                    rank,suit = new_card
+                    print ('You drew a {} of {}.'.format (rank, suit))
+                    player_hand.append(new_card)
+
+                    # check if the player is busted after the draw
+                    if get_hand_value(player_hand)>21:
+                        continue
+                
+                # After one draw after doubling down the game must end for that round
+                # Which is similer to the stand action
+                if move in ('S','D'):
+                    break
+            
+
+            #Handle the delar's actions:
+            if get_hand_value(player_hand) <= 21:
+                while get_hand_value(dealer_hand) < 17:
+                    # The dealer hits
+                    print ('Delaer Hits ............................')
+                    dealer_hand.append(deck.pop())
+                    display_hands (player_hand, dealer_hand)
+
+
+                    # check if the dealer is busted or not
+                    if get_hand_value(dealer_hand)>21:
+                        break
+
+                    input ('Press Enter to Continue.................')
+                    print ('\n\n')
+
+            # Show the final Hands
+            display_hands(player_hand, dealer_hand, show_dealer_hand= True)
+
+            #Calculating final value of each of the players
+            player_value = get_hand_value(player_hand)
+            dealer_value = get_hand_value(dealer_hand)
+
+            #Handle whether the player won, lost or tied:
+
+            if dealer_value > 21 :
+                print ('Dealer busts! You win ${}'.format (bet))
+                money += bet
+            elif (player_value >21) or (player_value < dealer_value):
+                print ('You Lost!')
+                money -= bet
+            elif player_value>dealer_value:
+                print ("You Won ${}",format(bet))
+                money += bet
+            elif player_value == dealer_value :
+                print ("It's a tie, the bet is returned to you. ")
+            
+            input ('Press Enter to Continue .........')
+            print ('\n\n')
+
+    except Exception as e:
+        print ('An ERROR Occured due to ', e)
+
+
+# If h=the program is run (instead of imported), run the game
+
+if __name__ == '__main__' :
+    main()
+
