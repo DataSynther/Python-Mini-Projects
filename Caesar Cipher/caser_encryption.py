@@ -50,15 +50,55 @@ while True:
 while True:
     max_key = len(symbols) - 1
     print ('Please enter the key (0 to {}) to use',format(max_key))
-    key = input ('> ').upper()
-    if not key.isdecimal():
+    key1 = input ('> ').upper()
+    if not key1.isdecimal():
+        key = int(key1)
         continue
 
-    if 0<= int(key) <=max_key:
-        key = int(key)
+    if 0<= int(key1) <=max_key:
+        key = int(key1)
         break
 
+# Let the user ente the message to encrypt/ decrypt
+print ('Enter the message to {}', format (mode))
+msg = input ('> ').upper() # since our symbol list only has uppercase characters
 
+#stores the encrypted/decreypted form of the message
+translated = '' 
+
+# Encrypt/Decrypt each symbol in the message 
+
+for symbol in msg :
+    if symbol in symbols:
+        #Get the encrypted (or decrypted) number for this symbol
+        num = symbols.find(symbol)
+        if mode == 'encrypt':
+            num = num+key
+        elif mode == 'decrypt':
+            num = num-key
+
+
+        #Handle the wrap around if number is larger than the length of symbols (or less than zero)
+        if num >= len(symbols):
+            num = num - len(symbols)
+        elif num < 0:
+            num = num + len(symbols)
+        
+        #Add encrypted/ decrypted number's symbol to translated:
+        translated = translated + symbols [num]
+
+    else:
+        #Just add the symbol without encrypting/decrypting
+        translated = translated + symbol
+
+#Display the encrypted / decrypted string to the screen:
+print (translated)
+
+try:
+    pyperclip.copy(translated)
+    print (f" Full {mode}ed text copied to clipboard")
+except:
+    pass
 
 
 
