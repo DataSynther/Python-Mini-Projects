@@ -56,7 +56,7 @@ def main():
     # Keep asking for inputs until we get the valid values 
 
     while True:    
-        msg = input ('> ').replace (" ","")
+        msg = input ('> ')
         if len(msg)> 0:
             break
         else :
