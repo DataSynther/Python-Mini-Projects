@@ -24,6 +24,8 @@ def encrypt_message (code, msg):
     '''
 
     key = len(code)
+
+    ## Step 1:  Fill the columns 
     # Each string in the ciphertext represents a column in the grid:
     cipher_text = ['']*key
 
@@ -42,13 +44,17 @@ def encrypt_message (code, msg):
             #move the currentindex over:
             cur_index += key
         
-    # Read the text in correct order:
+    ## Step 2:  Determine stable column order 
+    #Pair each letter with its original index, then sort
 
+    indexed_code = list(enumerate(code))
+    sorted_order = sorted(indexed_code, key = lambda x:(x[1],x[0]))
+
+    ## Step 3: Read Columns in the Sorted Order
+  
     result = []
-    for tag in sorted(list(code)):
-        for i in range(len(list(code))):
-            if list(code)[i] == tag:
-                result.append(cipher_text[i])
+    for orig_index, _ in sorted_order:
+        result.append(cipher_text[orig_index])
     
     # finally make it a normal text 
     return "".join(result)
