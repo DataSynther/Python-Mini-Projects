@@ -31,7 +31,7 @@ def main():
         was human" - Alan Turing 
 
         """
-    myKey = 2894
+    myKey = getRamdomKey ()
     myMode = 'encrypt' 
 
     if myMode == 'encrypt':
