@@ -55,7 +55,17 @@ def getCalenderFor(year, month):
         dayNumberRow += '|\n' # Add the vertical line after Saturday
 
         # Add the day number row and 3 blank rows to the calender text.
+        calText +=dayNumberRow
+        for i in range(3):
+            calText+= blankRow
+        
+        #Check if we're done with the month:
+        if currentDate.month != month:
+            break
 
+    #Add the horizontal line at the very bottom of the calender
+    calText += weekSeparator
+    return calText
 
 
 # Writing the main function 
@@ -94,6 +104,17 @@ def main():
                 break
 
             print ('Please enter a number from 1 to 12. Like 12 for December. ')
+
+        calText = getCalenderFor(year, month)
+        print(calText) # Display the calender.
+
+        # Save the Calender to a text file:
+        calenderFilename = 'calender_{}_{}.txt'.format(year, month)
+        with open(calenderFilename, 'w') as fileObj:
+            fileObj.write(calText)
+
+        print ('Saved to '+ calenderFilename)
+        print ('Thanks for using the Calender App')
 
     except Exception as e :
 
